@@ -13,6 +13,9 @@ document.querySelector('#posts').addEventListener('click', enableEdit)
 // Listen for cancel
 document.querySelector('.card-form').addEventListener('click', cancelEdit)
 
+// Listen for delete
+document.querySelector('#posts').addEventListener('click', deletePost);
+
 function getPosts(){
   http.get('http://localhost:3000/posts')
   .then(data => ui.showPosts(data))
@@ -95,4 +98,20 @@ function cancelEdit(e){
   }
 
   e.preventDefault()
+}
+
+// Delete Post
+function deletePost(e) {
+  if(e.target.parentElement.classList.contains('delete')) {
+    const id = e.target.parentElement.dataset.id;
+    if(confirm('Are you sure?')) {
+      http.delete(`http://localhost:3000/posts/${id}`)
+        .then(data => {
+          ui.showAlert('Post removed', 'alert alert-success');
+          getPosts();
+        })
+        .catch(err => console.log(err));
+    }
+  }
+  e.preventDefault();
 }
